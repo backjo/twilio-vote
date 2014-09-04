@@ -1,8 +1,8 @@
 // Set up a collection to contain player information. On the server,
 // it is backed by a MongoDB collection named "players".
 
-Players = new Meteor.Collection("votingtest24");
-Voters = new Meteor.Collection("voters");
+Players = new Meteor.Collection("ballot");
+Voters = new Meteor.Collection("voter");
 
 if (Meteor.isClient) {
   Template.leaderboard.players = function () {
@@ -60,9 +60,10 @@ Router.map(function() {
       console.log(this.params);
       console.log(this.request.body);
       if(voter) {
-	      console.log('voter found');
+	console.log('voter found');
         Players.update({idx: voter.vote}, {$inc: {score: -1}});
-        Voters.update({id: voter._id}, {$set: {vote: Number(this.request.body.Body)}});
+	console.log(voter._id);
+        Voters.update({_id: voter._id}, {$set: {vote: Number(this.request.body.Body)}});
       } else {
 	      console.log('new voter')
         Voters.insert({vote: Number(this.request.body.Body), number: this.request.body.From});
