@@ -2,6 +2,7 @@
 // it is backed by a MongoDB collection named "players".
 
 Players = new Meteor.Collection("votingtest24");
+Voters = new Meteor.Collection("voters");
 
 if (Meteor.isClient) {
   Template.leaderboard.players = function () {
@@ -52,10 +53,17 @@ Router.map(function() {
     where: 'server',
 
     action: function() {
-      console.log(this.request.body);
-
       this.response.writeHead(200, {'Content-type': 'application/json; charset=utf-8'});
       this.response.end(JSON.stringify(this.request.body));
+      var voter = Voters.findOne({"number": this.params.From});
+      if(voter) {
+        Players.update({idx: voter.vote}, {$inc: {score: -1}});
+        Voters.update({id: voter._id}, {$set: {vote: Number(this.params.Body)}});
+      } else {
+        Voters.insert({vote: Number(this.params.Body)});
+      }
+      Players.update({idx: Number(this.params.body)}, {$inc: {score: 1}});
     }
+
   })
 });
