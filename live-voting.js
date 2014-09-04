@@ -30,7 +30,7 @@ if (Meteor.isClient) {
     },
     'click button.submit_new': function() {
       var count = Players.find().count();
-      Players.insert({name: document.getElementById('new_person').value, idx: count+1});
+      Players.insert({name: document.getElementById('new_person').value, idx: count+1, score: 0});
     }
   });
 
@@ -55,14 +55,18 @@ Router.map(function() {
     action: function() {
       this.response.writeHead(200, {'Content-type': 'application/json; charset=utf-8'});
       this.response.end(JSON.stringify(this.request.body));
-      var voter = Voters.findOne({"number": this.params.From});
+      var voter = Voters.findOne({"number": this.request.body.From});
+      console.log(this.params);
+      console.log(this.request.body);
       if(voter) {
+	console.log('voter found');
         Players.update({idx: voter.vote}, {$inc: {score: -1}});
-        Voters.update({id: voter._id}, {$set: {vote: Number(this.params.Body)}});
+        Voters.update({id: voter._id}, {$set: {vote: Number(this.request.body.Body)}});
       } else {
-        Voters.insert({vote: Number(this.params.Body)});
+	console.log('new voter')
+        Voters.insert({vote: Number(this.request.body.Body), number: this.request.body.From});
       }
-      Players.update({idx: Number(this.params.body)}, {$inc: {score: 1}});
+      Players.update({idx: Number(this.request.body.Body)}, {$inc: {score: 1}});
     }
 
   })
