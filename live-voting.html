@@ -15,22 +15,16 @@
         {{/each}}
     </div>
 
-    {{#if selected_name}}
-    <div class="details">
-        <div class="name">{{selected_name}}</div>
-        <input type="button" class="inc" value="Give 5 points" />
-    </div>
-    {{else}}
-    <div class="none">Click a player to select</div>
-    {{/if}}
     <div class="add_item">
         <input id="new_person" type="text" class="new_person" value="Ballot option" />
         <button id="submit_new" class="submit_new"> Add</button>
+
+        <button id="reset" class="reset"> Reset</button>
     </div>
 </template>
 
 <template name="player">
-    <div class="player {{selected}} {{winning}}">
+    <div class="player">
         <span class="index">{{idx}}</span>
         <span class="name">{{name}}</span>
         <span class="score">{{score}}</span>
